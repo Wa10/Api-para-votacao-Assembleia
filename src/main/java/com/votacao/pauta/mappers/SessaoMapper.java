@@ -1,8 +1,6 @@
 package com.votacao.pauta.mappers;
 
-import com.votacao.pauta.dtos.PautaDTO;
 import com.votacao.pauta.dtos.SessaoDTO;
-import com.votacao.pauta.model.Pauta;
 import com.votacao.pauta.model.Sessao;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

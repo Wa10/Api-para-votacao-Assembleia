@@ -15,14 +15,13 @@ import javax.persistence.Id;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Associado {
-
+public class Voto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-
-    private String nome;
+    private Long id;
 
     private String cpf;
+    private String voto;
+    private Long idPauta;
 
 }
