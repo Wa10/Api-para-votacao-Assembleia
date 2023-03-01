@@ -29,15 +29,9 @@ public class Sessao {
 
     private Long timestampFim;
 
-    private Long votosAFavor;
-
-    private Long votosContra;
-
     public Sessao(Pauta pauta, Long duracaoSessao){
         this.pauta = pauta;
         this.timestampInicio = new Date().toInstant().getEpochSecond();
         this.timestampFim = this.timestampInicio + duracaoSessao;
-        this.votosAFavor = 0l;
-        this.votosContra = 0l;
     }
 }

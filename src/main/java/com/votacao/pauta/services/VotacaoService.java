@@ -1,7 +1,6 @@
 package com.votacao.pauta.services;
 
 import com.votacao.pauta.controllers.request.ResultadoVotacaoPautaResponse;
-import com.votacao.pauta.controllers.request.VotacaoRequest;
 import com.votacao.pauta.controllers.response.MessageResponse;
 import com.votacao.pauta.dtos.VotoDTO;
 import com.votacao.pauta.exceptions.AssociadoVotacaoException;
@@ -19,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static com.votacao.pauta.dtos.EstadoPautaConstantes.*;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class VotacaoService {
                 .filter(sessao -> sessao.getPauta().getId().equals(pauta.getId()))
                 .findFirst();
 
-        atualizarSessaoAtual(sessaoAtual, votoDTO);
+        atualizarSessaoAtual(sessaoAtual);
         save(mapper.toVoto(votoDTO));
 
         return new MessageResponse("Voto computado do associado com cpf: " + votoDTO.getCpf() + " para a pauta de id: " + pauta.getId());
@@ -66,8 +67,7 @@ public class VotacaoService {
     }
 
     public void validacoes(VotoDTO votoDTO){
-        Optional<Voto> byCpfAndIdPauta = findByCpfAndIdPauta(votoDTO.getCpf(), votoDTO.getIdPauta());
-        Optional<Voto> byCpf = findByCpf(votoDTO.getCpf());
+
         if(findByCpfAndIdPauta(votoDTO.getCpf(), votoDTO.getIdPauta()).isPresent()){
             throw new AssociadoVotacaoException("Associado com o cpf " + votoDTO.getCpf() + " já votou para essa pauta");
         }
@@ -77,7 +77,7 @@ public class VotacaoService {
         }
     }
 
-    public void atualizarSessaoAtual(Optional<Sessao> sessaoAtual, VotoDTO votoDTO){
+    public void atualizarSessaoAtual(Optional<Sessao> sessaoAtual){
         if(sessaoAtual.isPresent()){
             if(sessaoAtual.get().getTimestampFim() < new Date().toInstant().getEpochSecond()){
                 throw new SessaoFinalizadaException("Sessão ultrapassou o periodo de votação");
@@ -104,12 +104,12 @@ public class VotacaoService {
 
         if(sessao.isPresent()){
             if(sessao.get().getTimestampFim() >= new Date().toInstant().getEpochSecond()){
-                resultadoVotacao.setEstado("Votacao aberta");
+                resultadoVotacao.setEstado(EM_USO);
             } else {
-                resultadoVotacao.setEstado("Votacao fechada");
+                resultadoVotacao.setEstado(FINALIZADA);
             }
         }else {
-            resultadoVotacao.setEstado("Sessão não iniciada");
+            resultadoVotacao.setEstado(NAO_INICIADA);
         }
 
         List<Voto> votos = findAllByIdPauta(pauta.getId());

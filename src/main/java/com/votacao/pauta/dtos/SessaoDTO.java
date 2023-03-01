@@ -16,6 +16,4 @@ public class SessaoDTO {
     private Pauta pauta;
     private Long timestampInicio;
     private Long timestampFim;
-    private Long votosAFavor;
-    private Long votosContra;
 }
