@@ -59,4 +59,11 @@ public class ResourceExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(AssociadoVotacaoException.class)
+    public ResponseEntity<ExceptionError> constraintViolationException(AssociadoVotacaoException ex, HttpServletRequest request){
+        ExceptionError error = new ExceptionError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),"Associado já votou para essa pauta", ex.getMessage(), request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
 }

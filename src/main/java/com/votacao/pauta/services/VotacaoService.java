@@ -1,5 +1,6 @@
 package com.votacao.pauta.services;
 
+import com.votacao.pauta.controllers.request.ResultadoVotacaoPautaResponse;
 import com.votacao.pauta.controllers.request.VotacaoRequest;
 import com.votacao.pauta.controllers.response.MessageResponse;
 import com.votacao.pauta.dtos.VotoDTO;
@@ -81,18 +82,45 @@ public class VotacaoService {
             if(sessaoAtual.get().getTimestampFim() < new Date().toInstant().getEpochSecond()){
                 throw new SessaoFinalizadaException("Sessão ultrapassou o periodo de votação");
             }
-            if(votoDTO.getVoto().equals("Sim")){
-                Long VotacaoSimAtual = sessaoAtual.get().getVotosAFavor();
-                sessaoAtual.get().setVotosAFavor(++VotacaoSimAtual);
-            }else if(votoDTO.getVoto().equals("Não")){
-                Long votacaoNaoAtual = sessaoAtual.get().getVotosContra();
-                sessaoAtual.get().setVotosContra(++votacaoNaoAtual);
-            }
 
             sessaoService.update(sessaoAtual.get());
         }else{
             throw new SessaoException("Ainda não existe Assembléia aberta para esta pauta");
         }
+    }
+
+    public List<Voto> findAllByIdPauta(Long id){
+        return votoRepository.findAllByIdPauta(id);
+    }
+
+    public ResultadoVotacaoPautaResponse findVotacaoByIdPauta(Long id) {
+        ResultadoVotacaoPautaResponse resultadoVotacao = new ResultadoVotacaoPautaResponse();
+
+        Pauta pauta = pautaService.findById(id);
+        resultadoVotacao.setIdPauta(pauta.getId());
+        resultadoVotacao.setNomePauta(pauta.getNomePauta());
+
+        Optional<Sessao> sessao = sessaoService.findSessaoByIdPauta(pauta.getId());
+
+        if(sessao.isPresent()){
+            if(sessao.get().getTimestampFim() >= new Date().toInstant().getEpochSecond()){
+                resultadoVotacao.setEstado("Votacao aberta");
+            } else {
+                resultadoVotacao.setEstado("Votacao fechada");
+            }
+        }else {
+            resultadoVotacao.setEstado("Sessão não iniciada");
+        }
+
+        List<Voto> votos = findAllByIdPauta(pauta.getId());
+
+        long votosFavoraveis = votos.stream().filter(voto -> voto.getVoto().equals("Sim")).count();
+        long votosContrarios = votos.stream().filter(voto -> voto.getVoto().equals("Não")).count();
+
+        resultadoVotacao.setVotosFavoraveis(votosFavoraveis);
+        resultadoVotacao.setVotosContrario(votosContrarios);
+
+        return resultadoVotacao;
     }
 
 }

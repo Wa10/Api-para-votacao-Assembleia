@@ -1,6 +1,5 @@
 package com.votacao.pauta.services;
 
-import com.votacao.pauta.controllers.response.MessageResponse;
 import com.votacao.pauta.dtos.PautaDTO;
 import com.votacao.pauta.exceptions.ObjectNotFoundException;
 import com.votacao.pauta.mappers.PautaMapper;
@@ -33,6 +32,5 @@ public class PautaService {
     public List<Pauta> findAll() {
         return pautaRepository.findAll();
     }
-
 
 }

@@ -1,7 +1,6 @@
 package com.votacao.pauta.services;
 
 import com.votacao.pauta.controllers.request.SessaoRequest;
-import com.votacao.pauta.controllers.response.MessageResponse;
 import com.votacao.pauta.exceptions.ObjectNotFoundException;
 import com.votacao.pauta.exceptions.PautaIndisponivelException;
 import com.votacao.pauta.model.Pauta;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +18,6 @@ public class SessaoService {
 
     private final SessaoRepository sessaoRepository;
     private final PautaService pautaService;
-
 
     public Sessao save(SessaoRequest sessaoRequest) {
         Pauta pauta = pautaService.findById(sessaoRequest.getIdPauta());
@@ -50,5 +49,13 @@ public class SessaoService {
 
     public List<Sessao> findAll() {
         return sessaoRepository.findAll();
+    }
+
+    public Optional<Sessao> findSessaoByIdPauta(Long id){
+
+        List<Sessao> sessoes = findAll();
+        Optional<Sessao> sessao = sessoes.stream().filter(s -> s.getPauta().getId().equals(id)).findFirst();
+
+        return sessao;
     }
 }
