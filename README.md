@@ -32,4 +32,6 @@ https://documenter.getpostman.com/view/14662521/2s93CSpqrP
 ### Observações
 - O banco Postgres foi criado pelo RDS na AWS e as credencias foi colocadas estaticamente apenas para esse desafio, a AWS conta com serviços e ferramentas para evitar colocar as senhas cravadas na aplicação, como por exemplo o AWS Secrets Manager e o AWS Systems Manager Parameter Store.
 
+Banco desativado temporariamente
+
 
